@@ -1,0 +1,63 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <application
+        android:label="Reguly"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false">
+        <!--
+          allowBackup="false" & fullBackupContent="false":
+          Tanpa ini, Android's Auto Backup for Apps akan mem-backup data app
+          (termasuk SharedPreferences seperti "saved_email" di login_screen.dart)
+          ke Google Drive akun user SEBELUM app di-uninstall, lalu me-restore-nya
+          otomatis saat APK dengan applicationId yang sama di-install ulang.
+          Efeknya: uninstall+reinstall terasa "tidak benar-benar bersih" karena
+          data lama (mis. email yang pernah di-"Ingat saya") kembali muncul
+          padahal user mengira sudah reset total. Menonaktifkan ini memastikan
+          reinstall selalu berarti state kosong dari awal, penting terutama
+          selama masa testing/development.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+        <!--
+          Fallback channel default untuk plugin firebase_messaging.
+          Dipakai HANYA jika sebuah notifikasi FCM masuk tanpa field
+          android.notification.channel_id di payload-nya (misal notifikasi
+          dari fitur lain di masa depan yang belum di-set channel-nya).
+          Untuk notifikasi goal terbengkalai, channel yang benar-benar
+          dipakai adalah "goal_alert_channel" (lihat main.dart), yang wajib
+          eksplisit di-set lewat channel_id pada payload Edge Function.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="goal_alert_channel" />
+    </application>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
